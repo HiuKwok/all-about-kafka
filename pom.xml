@@ -11,6 +11,7 @@
     <modules>
         <module>SampleProducer</module>
         <module>SampleConsumer</module>
+        <module>streamExample</module>
     </modules>
 
     <properties>
