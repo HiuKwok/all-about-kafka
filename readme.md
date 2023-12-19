@@ -8,3 +8,6 @@ https://www.tutorialspoint.com/apache_kafka/apache_kafka_simple_producer_example
 
 Better producer reference:
 https://www.conduktor.io/kafka/complete-kafka-producer-with-java/
+
+Kafka stream:
+https://www.baeldung.com/java-kafka-streams
