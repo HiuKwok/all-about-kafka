@@ -1,8 +1,10 @@
 package com.hf;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
@@ -23,13 +25,39 @@ public class ProducerSendingString {
 
         // Client construction.
         try (KafkaProducer<String, String> producer = new KafkaProducer<>(properties)) {
-            // Construct a String to send over.
-            ProducerRecord<String, String> producerRecord =
-                    new ProducerRecord<>("hello_topic", "hello Kafka");
 
             System.out.println("Sending message");
-            // send data - asynchronous
-            producer.send(producerRecord);
+
+            for (int i=0; i<10; i++ ) {
+
+
+                // create a producer record
+
+                String topic = "demo_java";
+                String value = "hello world " + Integer.toString(i);
+                String key = "id_" + Integer.toString(i);
+
+
+                // Construct a String to send over.
+                ProducerRecord<String, String> producerRecord =
+                        new ProducerRecord<>(topic, key, value);
+
+                producer.send(producerRecord, new Callback() {
+                    public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                        // executes every time a record is successfully sent or an exception is thrown
+                        if (e == null) {
+                            // the record was successfully sent
+                            System.out.println("Received new metadata. \n" +
+                                    "Topic:" + recordMetadata.topic() + "\n" +
+                                    "Partition: " + recordMetadata.partition() + "\n" +
+                                    "Offset: " + recordMetadata.offset() + "\n" +
+                                    "Timestamp: " + recordMetadata.timestamp());
+                        } else {
+                            System.out.println("Error while producing" + e);
+                        }
+                    }
+                });
+            }
 
             System.out.println("Prepare to flush");
             // flush data - synchronous
